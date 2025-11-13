@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "project1-morozov-vasilii-m25-555"
+version = "0.1.0"
+description = "Homework 1"
+authors = ["Vasilii Morozov <you@example.com>"]
+readme = "README.md"
+packages = [{include = "labyrinth_game"}]
+
+[tool.poetry.dependencies]
+python = ">=3.12"
+
+[tool.poetry.scripts]
+project = "labyrinth_game.main:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
