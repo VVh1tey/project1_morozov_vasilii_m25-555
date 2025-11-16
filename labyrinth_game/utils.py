@@ -1,7 +1,6 @@
 # labyrinth_game/utils.py
 
 from .constants import ROOMS
-from .player_actions import get_input
 import math
 
 def describe_current_room(game_state):
@@ -42,15 +41,22 @@ def solve_puzzle(game_state):
     
     puzzle_question, correct_answer = room_data['puzzle']
     print(puzzle_question)
-    player_answer = get_input("Ваш ответ: ").strip().lower()
+    player_answer = input("Ваш ответ: ").strip().lower()
     
-    if player_answer == correct_answer.lower():
+    # Проверка альтернативных вариантов ответа
+    correct_answers = [correct_answer.lower()]
+    if correct_answer == '10':
+        correct_answers.extend(['десять', 'ten'])
+        
+    if player_answer in correct_answers:
         print("Правильно! Отличная работа!")
         room_data['puzzle'] = None
         give_puzzle_reward(game_state, current_room_name)
         
     else:
         print("Неверно. Попробуйте снова.")
+        if current_room_name == 'trap_room':
+            trigger_trap(game_state)
 
 
 def give_puzzle_reward(game_state, room_name):
@@ -97,13 +103,13 @@ def attempt_open_treasure(game_state):
         return
     
     print("Сундук заперт массивным замком.")
-    want_code = get_input("Ввести код? (да/нет): ").strip().lower()
+    want_code = input("Ввести код? (да/нет): ").strip().lower()
     
     if want_code in ['да', 'yes', 'д', 'y']:
         if room_data['puzzle']:
             _, correct_code = room_data['puzzle']
             
-            player_code = get_input("Введите код: ").strip()
+            player_code = input("Введите код: ").strip()
             
             if player_code == correct_code:
                 print("Код верный! Замок открывается с тихим щелчком.")
@@ -124,13 +130,12 @@ def show_help():
     """
     Показывает список доступных команд
     """
+    from .constants import COMMANDS
+    
     print("Доступные команды:")
-    print("  look/осмотреться/l        - описание текущей комнаты")
-    print("  inventory/инвентарь/i     - показать ваши предметы")
-    print("  solve/загадка/s           - решить загадку в комнате")
-    print("  take [предмет]/взять      - взять предмет")
-    print("  quit/выход/q              - выйти из игры")
-    print("  help/помощь/h             - показать эту справку")
+    for cmd, desc in COMMANDS.items():
+        # Форматируем вывод с выравниванием по левому краю (16 символов)
+        print(f"  {cmd.ljust(16)} - {desc}")
     print()
 
 def pseudo_random(seed, modulo):
@@ -154,7 +159,7 @@ def trigger_trap(game_state):
         lost_item = inventory.pop(index)
         print(f"Вы потеряли предмет: {lost_item}!")
     else:
-        damage = pseudo_random(game_state['steps'], 10)
+        damage = pseudo_random(game_state['steps_taken'], 10)
         if damage < 3:
             print("Каменная плита падает на вас! Игра окончена.")
             game_state['game_over'] = True
@@ -165,10 +170,10 @@ def random_event(game_state):
     """
     Создает случайные события во время перемещения игрока
     """
-    if pseudo_random(game_state['steps'], 10) != 0:
+    if pseudo_random(game_state['steps_taken'], 10) != 0:
         return
     
-    event_type = pseudo_random(game_state['steps'], 3)
+    event_type = pseudo_random(game_state['steps_taken'], 3)
     current_room = game_state['current_room']
     inventory = game_state['player_inventory']
     

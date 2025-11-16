@@ -1,8 +1,8 @@
 # labyrinth_game/main.py
 
 from .constants import ROOMS
-from .player_actions import get_input, show_inventory, parse_direction,move_player
-from .utils import describe_current_room, show_help, solve_puzzle
+from .player_actions import get_input, show_inventory, parse_direction,move_player, get_direction_aliases
+from .utils import attempt_open_treasure, describe_current_room, show_help, solve_puzzle
 
 
 def process_command(command, game_state):
@@ -19,8 +19,11 @@ def process_command(command, game_state):
     elif command in ["inventory", "инвентарь", "i"]:
         show_inventory(game_state)
         
-    elif command in ["solve", "загадка", "s"]:
-        solve_puzzle(game_state)
+    elif command in ["solve", "загадка"]:
+        if game_state['current_room'] == 'treasure_room':
+            attempt_open_treasure(game_state)
+        else:
+            solve_puzzle(game_state)
         
     elif command in ["help", "помощь", "h"]:
         show_help()
@@ -39,8 +42,7 @@ def process_command(command, game_state):
         direction = parse_direction(direction_input)
         move_player(game_state, direction)
         
-    elif command in ["north", "south", "east", "west", "n", "s", "e", "w",
-                     "север", "юг", "восток", "запад", "с", "ю", "в", "з"]:
+    elif command in get_direction_aliases().keys():
         direction = parse_direction(command)
         move_player(game_state, direction)
         
@@ -49,7 +51,7 @@ def process_command(command, game_state):
         print()
 
 
-def take_item(item_name, game_state):
+def take_item(game_state, item_name):
     """
     Попытка взять предмет
     """
@@ -75,9 +77,10 @@ def main():
     """
     # Создаем начальное состояние игры
     game_state = {
-        'current_room': 'entrance',
-        'player_inventory': [],
-        'game_over': False
+            'player_inventory': [], # Инвентарь игрока
+            'current_room': 'entrance', # Текущая комната
+            'game_over': False, # Значения окончания игры
+            'steps_taken': 0 # Количество шагов
     }
     
     print("Добро пожаловать в Лабиринт сокровищ!")

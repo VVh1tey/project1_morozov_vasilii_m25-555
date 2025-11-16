@@ -46,6 +46,14 @@ def move_player(game_state, direction):
         print(f"Ошибка: комната '{destination_room}' не существует!")
         return False
     
+    # Проверка на переход в treasure_room
+    if destination_room == 'treasure_room':
+        if 'rusty_key' in game_state['player_inventory']:
+            print("Вы используете найденный ключ, чтобы открыть путь в комнату сокровищ.")
+        else:
+            print("Дверь заперта. Нужен ключ, чтобы пройти дальше.")
+            return False
+    
     game_state['current_room'] = destination_room
     
     print(f"Вы идете на {direction}...")
@@ -55,7 +63,7 @@ def move_player(game_state, direction):
     describe_current_room(game_state)
     
     # Увеличиваем счетчик шагов и проверяем случайные события
-    game_state['steps'] += 1
+    game_state['steps_taken'] += 1
     random_event(game_state)
     
     return True
