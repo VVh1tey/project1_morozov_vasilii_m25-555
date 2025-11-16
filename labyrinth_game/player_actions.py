@@ -1,6 +1,7 @@
 # labyrinth_game/player_actions.py
 
 from .constants import ROOMS
+from .utils import random_event
 
 def get_input(prompt="> "):
     """
@@ -52,6 +53,10 @@ def move_player(game_state, direction):
     
     from .utils import describe_current_room
     describe_current_room(game_state)
+    
+    # Увеличиваем счетчик шагов и проверяем случайные события
+    game_state['steps'] += 1
+    random_event(game_state)
     
     return True
 

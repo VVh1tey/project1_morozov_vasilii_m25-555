@@ -2,7 +2,7 @@
 
 from .constants import ROOMS
 from .player_actions import get_input
-
+import math
 
 def describe_current_room(game_state):
     """
@@ -132,3 +132,54 @@ def show_help():
     print("  quit/выход/q              - выйти из игры")
     print("  help/помощь/h             - показать эту справку")
     print()
+
+def pseudo_random(seed, modulo):
+    """
+    Генерирует псевдослучайное число в диапазоне [0, modulo)
+    на основе синуса и математических преобразований
+    """
+    x = math.sin(seed * 12.9898) * 43758.5453
+    fractional = x - math.floor(x)
+    return int(fractional * modulo)
+
+def trigger_trap(game_state):
+    """
+    Обрабатывает срабатывание ловушки с различными последствиями
+    """
+    print("\nЛовушка активирована! Пол стал дрожать...\n")
+    
+    inventory = game_state['player_inventory']
+    if inventory:
+        index = pseudo_random(len(inventory), len(inventory))
+        lost_item = inventory.pop(index)
+        print(f"Вы потеряли предмет: {lost_item}!")
+    else:
+        damage = pseudo_random(game_state['steps'], 10)
+        if damage < 3:
+            print("Каменная плита падает на вас! Игра окончена.")
+            game_state['game_over'] = True
+        else:
+            print("Вам удалось увернуться в последний момент!")
+
+def random_event(game_state):
+    """
+    Создает случайные события во время перемещения игрока
+    """
+    if pseudo_random(game_state['steps'], 10) != 0:
+        return
+    
+    event_type = pseudo_random(game_state['steps'], 3)
+    current_room = game_state['current_room']
+    inventory = game_state['player_inventory']
+    
+    if event_type == 0:
+        print("\nВы заметили блестящую монетку на полу!\n")
+        ROOMS[current_room]['items'].append('coin')
+    elif event_type == 1:
+        print("\nВы слышите странный шорох позади себя...\n")
+        if 'sword' in inventory:
+            print("Вы резко оборачиваетесь с мечом в руке - существо убегает!\n")
+    elif event_type == 2:
+        if current_room == 'trap_room' and 'torch' not in inventory:
+            print("\nВы чувствуете, как пол под ногами начинает двигаться...\n")
+            trigger_trap(game_state)
