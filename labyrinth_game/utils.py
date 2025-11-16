@@ -1,7 +1,9 @@
 # labyrinth_game/utils.py
 
-from .constants import ROOMS
 import math
+
+from .constants import EVENT_PROBABILITY, ROOMS, TOTAL_EVENT_TYPES
+
 
 def describe_current_room(game_state):
     """
@@ -170,10 +172,10 @@ def random_event(game_state):
     """
     Создает случайные события во время перемещения игрока
     """
-    if pseudo_random(game_state['steps_taken'], 10) != 0:
+    if pseudo_random(game_state['steps_taken'], EVENT_PROBABILITY) != 0:
         return
     
-    event_type = pseudo_random(game_state['steps_taken'], 3)
+    event_type = pseudo_random(game_state['steps_taken'], TOTAL_EVENT_TYPES)
     current_room = game_state['current_room']
     inventory = game_state['player_inventory']
     

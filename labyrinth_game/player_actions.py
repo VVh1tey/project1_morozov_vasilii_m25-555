@@ -3,6 +3,7 @@
 from .constants import ROOMS
 from .utils import random_event
 
+
 def get_input(prompt="> "):
     """
     Безопасный ввод данных от пользователя с обработкой исключений
@@ -49,7 +50,8 @@ def move_player(game_state, direction):
     # Проверка на переход в treasure_room
     if destination_room == 'treasure_room':
         if 'rusty_key' in game_state['player_inventory']:
-            print("Вы используете найденный ключ, чтобы открыть путь в комнату сокровищ.")
+            print("Вы используете найденный ключ," \
+            " чтобы открыть путь в комнату сокровищ.")
         else:
             print("Дверь заперта. Нужен ключ, чтобы пройти дальше.")
             return False

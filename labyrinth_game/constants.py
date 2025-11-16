@@ -1,5 +1,8 @@
 # labyrinth_game/constants.py
 
+EVENT_PROBABILITY = 10
+TOTAL_EVENT_TYPES = 3
+
 COMMANDS = {
     "look/осмотреться/l": "описание текущей комнаты",
     "inventory/инвентарь/i": "показать ваши предметы",
@@ -113,3 +116,5 @@ ROOMS = {
         ),
     },
 }
+
+EVENT_PROBABILITY = 10

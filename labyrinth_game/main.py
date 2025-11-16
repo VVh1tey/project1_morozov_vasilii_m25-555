@@ -1,7 +1,13 @@
 # labyrinth_game/main.py
 
 from .constants import ROOMS
-from .player_actions import get_input, show_inventory, parse_direction,move_player, get_direction_aliases
+from .player_actions import (
+    get_direction_aliases,
+    get_input,
+    move_player,
+    parse_direction,
+    show_inventory,
+)
 from .utils import attempt_open_treasure, describe_current_room, show_help, solve_puzzle
 
 
@@ -32,7 +38,9 @@ def process_command(command, game_state):
         item_name = command.split(" ", 1)[1] if " " in command else ""
         take_item(game_state, item_name)
         
-    elif command.startswith("go ") or command.startswith("move ") or command.startswith("идти "):
+    elif command.startswith("go ")\
+            or command.startswith("move ")\
+            or command.startswith("идти "):
         direction_input = command.split(" ", 1)[1] if " " in command else ""
         direction = parse_direction(direction_input)
         move_player(game_state, direction)
